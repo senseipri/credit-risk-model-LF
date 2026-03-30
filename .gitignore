@@ -2,7 +2,24 @@
 __pycache__/
 *.py[codz]
 *$py.class
+*.pyc
+*.pyo
+.env
+.venv
+venv/
+.DS_Store
 
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# OS
+Thumbs.db
 # C extensions
 *.so
 
