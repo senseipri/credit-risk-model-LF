@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from typing import List, Tuple
+
 from prediction_helper import predict
 from logger import get_logger
 
@@ -33,6 +35,7 @@ class CreditRiskOutput(BaseModel):
     probability: float
     credit_score: int
     rating: str
+    top_features: List[Tuple[str, float]]
 
 
 # ---------------- HEALTH CHECK ----------------
@@ -55,7 +58,8 @@ def predict_credit_risk(input_data: CreditRiskInput):
     logger.info(f"Request received: {input_data.dict()}")
 
     try:
-        probability, credit_score, rating = predict(
+        # FIXED (4 values now)
+        probability, credit_score, rating, top_features = predict(
             input_data.age,
             input_data.income,
             input_data.loan_amount,
@@ -73,10 +77,12 @@ def predict_credit_risk(input_data: CreditRiskInput):
             f"Prediction successful | score={credit_score}, rating={rating}"
         )
 
+        # RETURN UPDATED RESPONSE
         return CreditRiskOutput(
             probability=probability,
             credit_score=credit_score,
-            rating=rating
+            rating=rating,
+            top_features=top_features
         )
 
     except Exception as e:
