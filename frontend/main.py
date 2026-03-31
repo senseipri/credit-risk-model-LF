@@ -135,6 +135,7 @@ if st.button("🚀 Calculate Risk"):
             prob = result['probability']
             score = result['credit_score']
             rating = result['rating']
+            top_features = result.get('top_features', [])
 
             # Color logic
             if rating == "Excellent":
@@ -174,6 +175,19 @@ if st.button("🚀 Calculate Risk"):
                 <h2 style="color:{color}">{rating}</h2>
                 </div>
                 """, unsafe_allow_html=True)
+
+            st.markdown("### 🔍 Key Risk Drivers")
+
+            if top_features:
+                for feature, impact in top_features:
+                    feature_name = feature.replace('_', ' ').title()
+
+                    if impact > 0:
+                        st.markdown(f"🔺 **{feature_name}** increasing risk")
+                    else:
+                        st.markdown(f"🟢 **{feature_name}** reducing risk")
+            else:
+                st.info("No feature contribution data available.")
 
         else:
             st.error("API Error ❌")

@@ -108,7 +108,9 @@ def predict(age, income, loan_amount, loan_tenure_months, avg_dpd_per_delinquenc
 
     logger.info(f"Prediction done: prob={probability:.4f}, score={credit_score}, rating={rating}")
 
-    return probability, credit_score, rating
+    top_features = get_top_risk_factors(input_df)
+
+    return probability, credit_score, rating, top_features
 
 
 # ---------------- CREDIT SCORE CALCULATION ----------------
@@ -136,3 +138,15 @@ def calculate_credit_score(input_df, base_score=300, scale_length=600):
     rating = get_rating(credit_score[0])
 
     return default_probability.flatten()[0], int(credit_score[0]), rating
+
+def get_top_risk_factors(input_df, top_n=3):
+    contributions = input_df.values[0] * model.coef_[0]
+
+    feature_contrib = list(zip(features, contributions))
+
+    # Sort by highest contribution (risk increasing)
+    feature_contrib.sort(key=lambda x: x[1], reverse=True)
+
+    top_features = feature_contrib[:top_n]
+
+    return top_features
